@@ -3,6 +3,8 @@ package com.example.user.a20161121_test2;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -22,12 +24,12 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 public class MainActivity extends AppCompatActivity {
-
+    ListView lv;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        lv = (ListView) findViewById(R.id.listView);
         new Thread() {
             @Override
             public void run() {
@@ -52,12 +54,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                     String str = result.toString();
                     Log.d("NET", str);
-                    MyDataHandler dataHandler = new MyDataHandler();
+                    final MyDataHandler dataHandler = new MyDataHandler();
                     SAXParserFactory spf = SAXParserFactory.newInstance();
                     SAXParser sp = spf.newSAXParser();
                     XMLReader xr = sp.getXMLReader();
                     xr.setContentHandler(dataHandler);
                     xr.parse(new InputSource(new StringReader(str)));
+
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            ArrayAdapter<String> adapter = new ArrayAdapter<String>(
+                                    MainActivity.this,
+                                    android.R.layout.simple_list_item_1,
+                                    dataHandler.titleList
+                            );
+                            lv.setAdapter(adapter);
+                        }
+                    });
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
                 } catch (ProtocolException e) {
