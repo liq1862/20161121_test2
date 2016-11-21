@@ -42,13 +42,13 @@ public class MainActivity extends AppCompatActivity {
                 String str_url = "http://udn.com/rssfeed/news/1";
                 URL url = null;
                 try {
-                    url = new URL(str_url);
-                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    url = new URL(str_url);     //建立url物件
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();      //建立一個HttpURLConnection物件,並利用URL的openConnection()來建立連線
                     conn.setRequestMethod("GET");
                     conn.connect();
                     inputStream = conn.getInputStream();
 
-                    //==============
+                    //==============將inputStream內容取出
                     ByteArrayOutputStream result = new ByteArrayOutputStream();
                     byte[] buffer = new byte[1024];
                     int length;
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     String str = result.toString();
                     Log.d("NET", str);
+
                     final MyDataHandler dataHandler = new MyDataHandler();
                     SAXParserFactory spf = SAXParserFactory.newInstance();
                     SAXParser sp = spf.newSAXParser();
@@ -67,11 +68,13 @@ public class MainActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
+                            //抓標題
                             ArrayAdapter<String> adapter = new ArrayAdapter<String>(
                                     MainActivity.this,
                                     android.R.layout.simple_list_item_1,
                                     dataHandler.titleList
                             );
+                            //前往新聞網址
                             lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
